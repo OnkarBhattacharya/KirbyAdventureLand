@@ -35,3 +35,12 @@ export const INITIAL_STARS = [
   { id: 1, x: 600, y: GAME_HEIGHT - 220 - STAR_SIZE - 20 },
   { id: 2, x: 1650, y: GAME_HEIGHT - 300 - STAR_SIZE - 20 },
 ];
+
+export const CHARACTERS = [
+  { name: 'Kirby', colorClass: 'bg-primary' },
+  { name: 'Ansh', colorClass: 'bg-green-400' },
+  { name: 'KiKi', colorClass: 'bg-purple-400' },
+  { name: 'Oli', colorClass: 'bg-gray-400' },
+  { name: 'Oskar', colorClass: 'bg-blue-400' },
+  { name: 'Earnie', colorClass: 'bg-yellow-400' },
+];

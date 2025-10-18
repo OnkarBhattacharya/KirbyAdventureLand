@@ -14,12 +14,14 @@ import {
   INITIAL_ENEMIES,
   INITIAL_STARS,
   INVINCIBILITY_DURATION,
+  CHARACTERS,
 } from '@/lib/game-config';
 import KirbyCharacter from './kirby-character';
 import EnemyCharacter from './enemy-character';
 import Platform from './platform';
 import StarPowerup from './star-powerup';
 import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 type GameObject = {
   x: number;
@@ -54,6 +56,7 @@ export default function KirbyGame() {
   const [gameOver, setGameOver] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
   const [cameraX, setCameraX] = useState(0);
+  const [selectedCharacter, setSelectedCharacter] = useState(CHARACTERS[0].name);
 
   const keys = useRef<{ [key: string]: boolean }>({});
   const gameLoopRef = useRef<number>();
@@ -199,12 +202,30 @@ export default function KirbyGame() {
 
   if (!gameStarted) {
     return (
-         <div
-            className="flex flex-col items-center justify-center bg-card/80 backdrop-blur-sm rounded-lg border-4 border-primary/50"
+        <div
+            className="flex flex-col items-center justify-center bg-card/80 backdrop-blur-sm rounded-lg border-4 border-primary/50 p-6"
             style={{ width: GAME_WIDTH, height: GAME_HEIGHT }}
         >
-            <h2 className="text-3xl font-bold text-primary mb-4">Welcome!</h2>
-            <p className="mb-8 text-center text-secondary-foreground">Use Arrow Keys to move and Space/Up to Jump.</p>
+            <h2 className="text-3xl font-bold text-primary mb-2">Welcome!</h2>
+            <p className="mb-4 text-center text-secondary-foreground">Use Arrow Keys to move and Space/Up to Jump.</p>
+            
+            <h3 className="text-xl font-bold text-primary mb-4">Choose your character</h3>
+            <div className="grid grid-cols-3 gap-4 mb-6">
+                {CHARACTERS.map(char => (
+                    <button
+                        key={char.name}
+                        onClick={() => setSelectedCharacter(char.name)}
+                        className={cn(
+                            "p-2 rounded-lg border-2 flex flex-col items-center gap-2 transition-all",
+                            selectedCharacter === char.name ? 'border-accent bg-accent/20' : 'border-border hover:bg-muted'
+                        )}
+                    >
+                        <div className={cn("w-10 h-10 rounded-full", char.colorClass)}></div>
+                        <span className="font-semibold text-sm">{char.name}</span>
+                    </button>
+                ))}
+            </div>
+
             <Button onClick={startGame} className="bg-accent text-accent-foreground hover:bg-accent/80">Start Game</Button>
         </div>
     )
@@ -230,7 +251,7 @@ export default function KirbyGame() {
         className="absolute top-0 left-0 w-full h-full"
         style={{ transform: `translateX(-${cameraX}px)` }}
       >
-        <KirbyCharacter position={kirby} isInvincible={isInvincible} />
+        <KirbyCharacter position={kirby} isInvincible={isInvincible} character={selectedCharacter} />
         {platformData.map((p, i) => (
           <Platform key={i} {...p} />
         ))}
