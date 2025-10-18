@@ -127,6 +127,32 @@ const CharacterLook = ({ character }: { character: string }) => {
                 <div className="absolute bottom-[25%] left-1/2 -translate-x-1/2 w-5 h-3 border-b-2 border-black rounded-b-full" />
             </>
         );
+    case 'Harry':
+        return (
+            <>
+              {/* Hair */}
+              <div className="absolute top-[20%] left-1/2 -translate-x-1/2 w-8 h-4 bg-yellow-800 rounded-t-full" />
+              {/* Eyes */}
+              <div className="absolute top-[40%] left-[20%] w-2 h-4 bg-black rounded-full" />
+              <div className="absolute top-[40%] right-[20%] w-2 h-4 bg-black rounded-full" />
+            </>
+        );
+    case 'Mika':
+        return (
+            <>
+                {/* Eyes with lashes */}
+                <div className="absolute top-[35%] left-[20%] w-3 h-4 bg-black rounded-full">
+                    <div className="absolute -top-1 -right-1 w-1 h-2 bg-black transform rotate-45 rounded-full"></div>
+                    <div className="absolute -top-1 right-0 w-1 h-2 bg-black transform rotate-45 rounded-full"></div>
+                </div>
+                <div className="absolute top-[35%] right-[20%] w-3 h-4 bg-black rounded-full">
+                    <div className="absolute -top-1 -left-1 w-1 h-2 bg-black transform -rotate-45 rounded-full"></div>
+                    <div className="absolute -top-1 left-0 w-1 h-2 bg-black transform -rotate-45 rounded-full"></div>
+                </div>
+                {/* Smile */}
+                <div className="absolute bottom-[25%] left-1/2 -translate-x-1/2 w-5 h-3 border-b-2 border-l-2 border-r-2 border-black rounded-full" />
+            </>
+        );
     case 'Kirby':
     default:
       return (
@@ -163,6 +189,8 @@ const KirbyCharacter: FC<KirbyCharacterProps> = ({ position, isInvincible, chara
     Nidhi: 'bg-pink-300',
     Xavier: 'bg-orange-300',
     Ray: 'bg-amber-300',
+    Harry: 'bg-cyan-400',
+    Mika: 'bg-fuchsia-400',
   }
   
   return (
