@@ -58,6 +58,43 @@ const CharacterLook = ({ character }: { character: string }) => {
               <div className="absolute top-[40%] right-[20%] w-4 h-1 bg-black rounded-full transform rotate-12" />
             </>
           );
+    case 'Bali':
+        return (
+            <>
+              {/* Happy Eyes */}
+              <div className="absolute top-[40%] left-[20%] w-4 h-2 border-t-2 border-black rounded-t-full transform rotate-12" />
+              <div className="absolute top-[40%] right-[20%] w-4 h-2 border-t-2 border-black rounded-t-full transform -rotate-12" />
+            </>
+        );
+    case 'Joshua':
+        return (
+            <>
+              {/* Wide Eyes */}
+              <div className="absolute top-[35%] left-[15%] w-5 h-5 bg-white rounded-full border-2 border-black">
+                <div className="w-2 h-2 bg-black rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+              </div>
+              <div className="absolute top-[35%] right-[15%] w-5 h-5 bg-white rounded-full border-2 border-black">
+                <div className="w-2 h-2 bg-black rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+              </div>
+            </>
+        );
+    case 'Leo':
+        return (
+            <>
+              {/* Sunglasses */}
+              <div className="absolute top-[35%] left-1/2 -translate-x-1/2 w-10 h-4 bg-black rounded-md" />
+            </>
+        );
+    case 'Jacks':
+        return (
+            <>
+              {/* X eyes */}
+              <div className="absolute top-[35%] left-[20%] w-4 h-1 bg-black transform rotate-45" />
+              <div className="absolute top-[35%] left-[20%] w-4 h-1 bg-black transform -rotate-45" />
+              <div className="absolute top-[35%] right-[20%] w-4 h-1 bg-black transform rotate-45" />
+              <div className="absolute top-[35%] right-[20%] w-4 h-1 bg-black transform -rotate-45" />
+            </>
+        );
     case 'Kirby':
     default:
       return (
@@ -87,6 +124,10 @@ const KirbyCharacter: FC<KirbyCharacterProps> = ({ position, isInvincible, chara
     Oli: 'bg-gray-400',
     Oskar: 'bg-blue-400',
     Earnie: 'bg-yellow-400',
+    Bali: 'bg-teal-400',
+    Joshua: 'bg-indigo-400',
+    Leo: 'bg-lime-400',
+    Jacks: 'bg-rose-400',
   }
   
   return (
