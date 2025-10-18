@@ -151,104 +151,97 @@ export default function KirbyGame() {
 
   const gameLoop = useCallback(() => {
     if (gameOver || !gameStarted) return;
-    
-    let currentKirby: KirbyState | null = null;
-    
+
     if (!levelComplete) {
-        setKirby(prevKirby => {
-          currentKirby = prevKirby;
-          let { x, y, vx, vy, onGround } = { ...prevKirby };
-    
-          if (keys.current['arrowright']) vx = MOVE_SPEED;
-          else if (keys.current['arrowleft']) vx = -MOVE_SPEED;
-          else vx = 0;
-    
-          if ((keys.current['arrowup'] || keys.current[' ']) && onGround) {
-            vy = JUMP_FORCE;
-            onGround = false;
-          }
-          
-          vy += GRAVITY;
-    
-          let newX = x + vx;
-          let newY = y + vy;
-    
+      setKirby(prevKirby => {
+        let { x, y, vx, vy, onGround } = { ...prevKirby };
+
+        if (keys.current['arrowright']) vx = MOVE_SPEED;
+        else if (keys.current['arrowleft']) vx = -MOVE_SPEED;
+        else vx = 0;
+
+        if ((keys.current['arrowup'] || keys.current[' ']) && onGround) {
+          vy = JUMP_FORCE;
           onGround = false;
-          for (const platform of platforms) {
-            if (x + KIRBY_SIZE > platform.x && x < platform.x + platform.width && y + KIRBY_SIZE <= platform.y && newY + KIRBY_SIZE >= platform.y) {
-              newY = platform.y - KIRBY_SIZE;
-              vy = 0;
-              onGround = true;
-            }
-          }
-    
-          if (newX < cameraX) newX = cameraX;
-    
-          if (newY > GAME_HEIGHT) {
-              handleGameOver();
-              return prevKirby;
-          };
-          
-          if (newX > prevKirby.x) setScore(s => s + (newX - prevKirby.x) / 10);
-    
-          return { x: newX, y: newY, vx, vy, onGround };
-        });
+        }
         
-        setEnemies(prevEnemies => prevEnemies.map(enemy => {
-            let newX = enemy.x + enemy.dir * enemy.speed;
-            if (Math.abs(newX - enemy.initialX) > enemy.range / 2) {
-                enemy.dir *= -1;
-            }
-            return {...enemy, x: newX};
-        }));
-    
-        setEnemies(prevEnemies => {
-            const kirbyState = kirby; // use the latest state
-            if (!kirbyState) return prevEnemies;
-            return prevEnemies.filter(enemy => {
-                if (kirbyState.x < enemy.x + ENEMY_SIZE && kirbyState.x + KIRBY_SIZE > enemy.x && kirbyState.y < enemy.y + ENEMY_SIZE && kirbyState.y + KIRBY_SIZE > enemy.y) {
-                    if (isInvincible) {
-                        setScore(s => s + 200);
-                        return false;
-                    }
-                    if (kirbyState.vy > 0 && (kirbyState.y + KIRBY_SIZE) < (enemy.y + ENEMY_SIZE / 2)) {
-                        setKirby(k => ({ ...k, vy: JUMP_FORCE / 1.5 }));
-                        setScore(s => s + 100);
-                        return false;
-                    } else {
-                        handleGameOver();
-                    }
-                }
-                return true;
-            });
-        });
-    
-        setStars(prevStars => prevStars.filter(star => {
-            const kirbyState = kirby;
-            if (!kirbyState) return true;
-            if (kirbyState.x < star.x + STAR_SIZE && kirbyState.x + KIRBY_SIZE > star.x && kirbyState.y < star.y + STAR_SIZE && kirbyState.y + KIRBY_SIZE > star.y) {
-                setIsInvincible(true);
-                setScore(s => s + 50);
-                setTimeout(() => setIsInvincible(false), INVINCIBILITY_DURATION);
-                return false;
-            }
-            return true;
-        }));
-        
-        if (trophy && kirby) {
-          if (kirby.x < trophy.x + TROPHY_SIZE && kirby.x + KIRBY_SIZE > trophy.x && kirby.y < trophy.y + TROPHY_SIZE && kirby.y + KIRBY_SIZE > trophy.y) {
-            handleNextLevel();
+        vy += GRAVITY;
+
+        let newX = x + vx;
+        let newY = y + vy;
+
+        onGround = false;
+        for (const platform of platforms) {
+          if (x + KIRBY_SIZE > platform.x && x < platform.x + platform.width && y + KIRBY_SIZE <= platform.y && newY + KIRBY_SIZE >= platform.y) {
+            newY = platform.y - KIRBY_SIZE;
+            vy = 0;
+            onGround = true;
           }
         }
-    
-        setCameraX(prev => {
-            const kirbyState = kirby;
-            if (!kirbyState) return prev;
-            const targetCameraX = kirbyState.x - GAME_WIDTH / 4;
-            return Math.max(0, targetCameraX);
-        });
-    }
 
+        if (newX < cameraX) newX = cameraX;
+
+        if (newY > GAME_HEIGHT) {
+            handleGameOver();
+            return prevKirby;
+        };
+        
+        if (newX > prevKirby.x) setScore(s => s + (newX - prevKirby.x) / 10);
+
+        return { x: newX, y: newY, vx, vy, onGround };
+      });
+      
+      setEnemies(prevEnemies => prevEnemies.map(enemy => {
+          let newX = enemy.x + enemy.dir * enemy.speed;
+          if (Math.abs(newX - enemy.initialX) > enemy.range / 2) {
+              enemy.dir *= -1;
+          }
+          return {...enemy, x: newX};
+      }));
+
+      setEnemies(prevEnemies => {
+          const kirbyState = kirby; // use the latest state
+          return prevEnemies.filter(enemy => {
+              if (kirbyState.x < enemy.x + ENEMY_SIZE && kirbyState.x + KIRBY_SIZE > enemy.x && kirbyState.y < enemy.y + ENEMY_SIZE && kirbyState.y + KIRBY_SIZE > enemy.y) {
+                  if (isInvincible) {
+                      setScore(s => s + 200);
+                      return false;
+                  }
+                  if (kirbyState.vy > 0 && (kirbyState.y + KIRBY_SIZE) < (enemy.y + ENEMY_SIZE / 2)) {
+                      setKirby(k => ({ ...k, vy: JUMP_FORCE / 1.5 }));
+                      setScore(s => s + 100);
+                      return false;
+                  } else {
+                      handleGameOver();
+                  }
+              }
+              return true;
+          });
+      });
+
+      setStars(prevStars => prevStars.filter(star => {
+          const kirbyState = kirby;
+          if (kirbyState.x < star.x + STAR_SIZE && kirbyState.x + KIRBY_SIZE > star.x && kirbyState.y < star.y + STAR_SIZE && kirbyState.y + KIRBY_SIZE > star.y) {
+              setIsInvincible(true);
+              setScore(s => s + 50);
+              setTimeout(() => setIsInvincible(false), INVINCIBILITY_DURATION);
+              return false;
+          }
+          return true;
+      }));
+      
+      if (trophy) {
+        if (kirby.x < trophy.x + TROPHY_SIZE && kirby.x + KIRBY_SIZE > trophy.x && kirby.y < trophy.y + TROPHY_SIZE && kirby.y + KIRBY_SIZE > trophy.y) {
+          handleNextLevel();
+        }
+      }
+
+      setCameraX(prev => {
+          const kirbyState = kirby;
+          const targetCameraX = kirbyState.x - GAME_WIDTH / 4;
+          return Math.max(0, targetCameraX);
+      });
+    }
 
     gameLoopRef.current = requestAnimationFrame(gameLoop);
   }, [gameOver, gameStarted, isInvincible, handleGameOver, cameraX, platforms, trophy, levelComplete, handleNextLevel, kirby]);
