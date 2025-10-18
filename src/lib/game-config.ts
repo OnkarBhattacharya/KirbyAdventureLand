@@ -47,4 +47,7 @@ export const CHARACTERS = [
   { name: 'Joshua', colorClass: 'bg-indigo-400' },
   { name: 'Leo', colorClass: 'bg-lime-400' },
   { name: 'Jacks', colorClass: 'bg-rose-400' },
+  { name: 'Nidhi', colorClass: 'bg-pink-300' },
+  { name: 'Xavier', colorClass: 'bg-orange-300' },
+  { name: 'Ray', colorClass: 'bg-amber-300' },
 ];

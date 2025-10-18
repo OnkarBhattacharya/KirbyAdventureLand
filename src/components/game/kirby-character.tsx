@@ -95,6 +95,38 @@ const CharacterLook = ({ character }: { character: string }) => {
               <div className="absolute top-[35%] right-[20%] w-4 h-1 bg-black transform -rotate-45" />
             </>
         );
+    case 'Nidhi':
+        return (
+            <>
+                {/* Heart Eyes */}
+                <div className="absolute top-[35%] left-[18%] w-4 h-4 bg-red-500 transform rotate-45">
+                    <div className="absolute -top-2 left-0 w-4 h-4 bg-red-500 rounded-full" />
+                    <div className="absolute top-0 -left-2 w-4 h-4 bg-red-500 rounded-full" />
+                </div>
+                <div className="absolute top-[35%] right-[18%] w-4 h-4 bg-red-500 transform rotate-45">
+                    <div className="absolute -top-2 left-0 w-4 h-4 bg-red-500 rounded-full" />
+                    <div className="absolute top-0 -left-2 w-4 h-4 bg-red-500 rounded-full" />
+                </div>
+            </>
+        );
+    case 'Xavier':
+        return (
+            <>
+                {/* Monocle */}
+                <div className="absolute top-[30%] right-[15%] w-6 h-6 bg-transparent border-2 border-yellow-500 rounded-full" />
+                <div className="absolute top-[35%] right-[10%] w-1 h-3 bg-yellow-500 transform -rotate-45" />
+                <div className="absolute top-[45%] left-[25%] w-3 h-1 bg-black rounded-full" />
+            </>
+        );
+    case 'Ray':
+        return (
+            <>
+                {/* Winking Eye */}
+                <div className="absolute top-[40%] left-[20%] w-4 h-1 bg-black rounded-full" />
+                <div className="absolute top-[35%] right-[20%] w-4 h-4 bg-black rounded-full" />
+                <div className="absolute bottom-[25%] left-1/2 -translate-x-1/2 w-5 h-3 border-b-2 border-black rounded-b-full" />
+            </>
+        );
     case 'Kirby':
     default:
       return (
@@ -128,6 +160,9 @@ const KirbyCharacter: FC<KirbyCharacterProps> = ({ position, isInvincible, chara
     Joshua: 'bg-indigo-400',
     Leo: 'bg-lime-400',
     Jacks: 'bg-rose-400',
+    Nidhi: 'bg-pink-300',
+    Xavier: 'bg-orange-300',
+    Ray: 'bg-amber-300',
   }
   
   return (
