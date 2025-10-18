@@ -10,11 +10,10 @@ import {
   STAR_SIZE,
   GAME_WIDTH,
   GAME_HEIGHT,
-  PLATFORMS as platformData,
-  INITIAL_ENEMIES,
-  INITIAL_STARS,
-  INVINCIBILITY_DURATION,
+  LEVELS,
   CHARACTERS,
+  INVINCIBILITY_DURATION,
+  TROPHY_SIZE,
 } from '@/lib/game-config';
 import KirbyCharacter from './kirby-character';
 import EnemyCharacter from './enemy-character';
@@ -23,6 +22,8 @@ import StarPowerup from './star-powerup';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import Trophy from './trophy';
+import Fireworks from './fireworks';
 
 type GameObject = {
   x: number;
@@ -47,20 +48,44 @@ type StarState = GameObject & {
     id: number;
 };
 
+type TrophyState = GameObject & {
+  id: number;
+};
 
 export default function KirbyGame() {
+  const [level, setLevel] = useState(0);
   const [kirby, setKirby] = useState<KirbyState>({ x: 50, y: 0, vx: 0, vy: 0, onGround: false });
-  const [enemies, setEnemies] = useState<EnemyState[]>(INITIAL_ENEMIES.map(e => ({...e, initialX: e.x})));
-  const [stars, setStars] = useState<StarState[]>(INITIAL_STARS);
+  const [enemies, setEnemies] = useState<EnemyState[]>([]);
+  const [stars, setStars] = useState<StarState[]>([]);
+  const [platforms, setPlatforms] = useState(LEVELS[level].platforms);
+  const [trophy, setTrophy] = useState<TrophyState | null>(null);
   const [score, setScore] = useState(0);
   const [isInvincible, setIsInvincible] = useState(false);
   const [gameOver, setGameOver] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
   const [cameraX, setCameraX] = useState(0);
   const [selectedCharacter, setSelectedCharacter] = useState(CHARACTERS[0].name);
+  const [levelComplete, setLevelComplete] = useState(false);
 
   const keys = useRef<{ [key: string]: boolean }>({});
   const gameLoopRef = useRef<number>();
+
+  const loadLevel = useCallback((levelIndex: number) => {
+    const newLevelData = LEVELS[levelIndex];
+    if (!newLevelData) {
+        handleGameOver();
+        console.log("You beat the game!");
+        return;
+    }
+    setLevel(levelIndex);
+    setKirby({ x: 50, y: 0, vx: 0, vy: 0, onGround: false });
+    setPlatforms(newLevelData.platforms);
+    setEnemies(newLevelData.enemies.map(e => ({...e, initialX: e.x})));
+    setStars(newLevelData.stars);
+    setTrophy(newLevelData.trophy);
+    setCameraX(0);
+    setLevelComplete(false);
+  }, []);
 
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (['arrowright', 'arrowleft', 'arrowup', ' '].includes(e.key.toLowerCase())) {
@@ -86,15 +111,13 @@ export default function KirbyGame() {
   }, [handleKeyDown, handleKeyUp]);
   
   const resetGame = useCallback(() => {
-    setKirby({ x: 50, y: 0, vx: 0, vy: 0, onGround: false });
-    setEnemies(INITIAL_ENEMIES.map(e => ({...e, initialX: e.x})));
-    setStars(INITIAL_STARS);
     setScore(0);
     setIsInvincible(false);
     setGameOver(false);
-    setCameraX(0);
+    setLevel(0);
+    loadLevel(0);
     setGameStarted(true);
-  }, []);
+  }, [loadLevel]);
 
   const handleGameOver = useCallback(() => {
     setGameOver(true);
@@ -108,10 +131,23 @@ export default function KirbyGame() {
     resetGame();
   }
 
+  const handleNextLevel = useCallback(() => {
+    setLevelComplete(true);
+    setTimeout(() => {
+        const nextLevel = level + 1;
+        if (nextLevel < LEVELS.length) {
+            loadLevel(nextLevel);
+        } else {
+            // Handle game completion
+            console.log("You've completed all levels!");
+            handleGameOver();
+        }
+    }, 2000); // Show fireworks for 2 seconds
+  }, [level, loadLevel, handleGameOver]);
+
   const gameLoop = useCallback(() => {
-    if (gameOver || !gameStarted) return;
+    if (gameOver || !gameStarted || levelComplete) return;
     
-    // Using refs for kirby state inside loop to get latest value without dependency change
     let currentKirby: KirbyState | null = null;
     setKirby(prevKirby => {
       currentKirby = prevKirby;
@@ -132,7 +168,7 @@ export default function KirbyGame() {
       let newY = y + vy;
 
       onGround = false;
-      for (const platform of platformData) {
+      for (const platform of platforms) {
         if (x + KIRBY_SIZE > platform.x && x < platform.x + platform.width && y + KIRBY_SIZE <= platform.y && newY + KIRBY_SIZE >= platform.y) {
           newY = platform.y - KIRBY_SIZE;
           vy = 0;
@@ -187,6 +223,13 @@ export default function KirbyGame() {
         }
         return true;
     }));
+    
+    if (trophy && currentKirby && !levelComplete) {
+      if (currentKirby.x < trophy.x + TROPHY_SIZE && currentKirby.x + KIRBY_SIZE > trophy.x && currentKirby.y < trophy.y + TROPHY_SIZE && currentKirby.y + KIRBY_SIZE > trophy.y) {
+        setScore(s => s + 500);
+        handleNextLevel();
+      }
+    }
 
     setCameraX(prev => {
         if (!currentKirby) return prev;
@@ -195,7 +238,7 @@ export default function KirbyGame() {
     });
 
     gameLoopRef.current = requestAnimationFrame(gameLoop);
-  }, [gameOver, gameStarted, isInvincible, handleGameOver, cameraX]);
+  }, [gameOver, gameStarted, isInvincible, handleGameOver, cameraX, platforms, trophy, levelComplete, handleNextLevel]);
 
   useEffect(() => {
     if (gameStarted && !gameOver) {
@@ -249,6 +292,9 @@ export default function KirbyGame() {
       <div className="absolute top-4 left-4 text-2xl font-bold text-white z-20" style={{textShadow: '2px 2px 4px #000'}}>
         Score: {Math.floor(score)}
       </div>
+      <div className="absolute top-4 right-4 text-2xl font-bold text-white z-20" style={{textShadow: '2px 2px 4px #000'}}>
+        Level: {level + 1}
+      </div>
 
       {gameOver && (
         <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center z-30">
@@ -256,12 +302,14 @@ export default function KirbyGame() {
         </div>
       )}
 
+      {levelComplete && <Fireworks />}
+
       <div
         className="absolute top-0 left-0 w-full h-full"
         style={{ transform: `translateX(-${cameraX}px)` }}
       >
         <KirbyCharacter position={kirby} isInvincible={isInvincible} character={selectedCharacter} />
-        {platformData.map((p, i) => (
+        {platforms.map((p, i) => (
           <Platform key={i} {...p} />
         ))}
         {enemies.map((e) => (
@@ -270,6 +318,7 @@ export default function KirbyGame() {
         {stars.map((s) => (
           <StarPowerup key={s.id} position={s} />
         ))}
+        {trophy && <Trophy position={trophy} />}
       </div>
     </div>
   );
