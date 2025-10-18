@@ -24,6 +24,8 @@ import { cn } from '@/lib/utils';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import Trophy from './trophy';
 import Fireworks from './fireworks';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { ArrowLeft, ArrowRight, ArrowUp } from 'lucide-react';
 
 type GameObject = {
   x: number;
@@ -70,6 +72,7 @@ export default function KirbyGame() {
 
   const keys = useRef<{ [key: string]: boolean }>({});
   const gameLoopRef = useRef<number>();
+  const isMobile = useIsMobile();
 
   const loadLevel = useCallback((levelIndex: number) => {
     const newLevelData = LEVELS[levelIndex];
@@ -278,6 +281,16 @@ export default function KirbyGame() {
     };
   }, [gameStarted, gameOver, gameLoop]);
 
+  const handleTouchStart = (key: string) => (e: React.TouchEvent) => {
+    e.preventDefault();
+    keys.current[key] = true;
+  };
+
+  const handleTouchEnd = (key: string) => (e: React.TouchEvent) => {
+    e.preventDefault();
+    keys.current[key] = false;
+  };
+
   if (!gameStarted) {
     return (
         <div
@@ -339,7 +352,6 @@ export default function KirbyGame() {
         </div>
       )}
 
-
       {levelComplete && !gameWon && <Fireworks />}
 
       <div
@@ -358,6 +370,33 @@ export default function KirbyGame() {
         ))}
         {trophy && <Trophy position={trophy} />}
       </div>
+      {isMobile && (
+        <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center z-30">
+          <div className="flex gap-2">
+            <Button
+              className="w-16 h-16 rounded-full bg-primary/50 text-white"
+              onTouchStart={handleTouchStart('arrowleft')}
+              onTouchEnd={handleTouchEnd('arrowleft')}
+            >
+              <ArrowLeft className="w-8 h-8" />
+            </Button>
+            <Button
+              className="w-16 h-16 rounded-full bg-primary/50 text-white"
+              onTouchStart={handleTouchStart('arrowright')}
+              onTouchEnd={handleTouchEnd('arrowright')}
+            >
+              <ArrowRight className="w-8 h-8" />
+            </Button>
+          </div>
+          <Button
+            className="w-20 h-20 rounded-full bg-accent/50 text-white"
+            onTouchStart={handleTouchStart('arrowup')}
+            onTouchEnd={handleTouchEnd('arrowup')}
+          >
+            <ArrowUp className="w-10 h-10" />
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
