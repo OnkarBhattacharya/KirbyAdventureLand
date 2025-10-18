@@ -94,6 +94,13 @@ export default function KirbyGame() {
     setCameraX(0);
     setGameStarted(true);
   }, []);
+
+  const handleGameOver = useCallback(() => {
+    setGameOver(true);
+    setTimeout(() => {
+        setGameStarted(false);
+    }, 1500);
+  }, []);
   
   const startGame = () => {
     setGameStarted(true);
@@ -134,7 +141,7 @@ export default function KirbyGame() {
 
       if (newX < cameraX) newX = cameraX;
 
-      if (newY > GAME_HEIGHT) setGameOver(true);
+      if (newY > GAME_HEIGHT) handleGameOver();
       
       if (newX > prevKirby.x) setScore(s => s + (newX - prevKirby.x) / 10);
 
@@ -162,7 +169,7 @@ export default function KirbyGame() {
                     setScore(s => s + 100);
                     return false;
                 } else {
-                    setGameOver(true);
+                    handleGameOver();
                 }
             }
             return true;
@@ -187,7 +194,7 @@ export default function KirbyGame() {
     });
 
     gameLoopRef.current = requestAnimationFrame(gameLoop);
-  }, [gameOver, gameStarted, isInvincible, resetGame, cameraX]);
+  }, [gameOver, gameStarted, isInvincible, handleGameOver, cameraX]);
 
   useEffect(() => {
     if (gameStarted && !gameOver) {
@@ -243,7 +250,6 @@ export default function KirbyGame() {
       {gameOver && (
         <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center z-30">
           <h2 className="text-5xl font-bold text-red-500 mb-4" style={{textShadow: '2px 2px 4px #000'}}>Game Over</h2>
-          <Button onClick={resetGame} className="bg-accent text-accent-foreground hover:bg-accent/80">Play Again</Button>
         </div>
       )}
 
