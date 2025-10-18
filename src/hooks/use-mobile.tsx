@@ -8,7 +8,8 @@ export function useIsMobile() {
   React.useEffect(() => {
     const checkIsMobile = () => {
         const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-        setIsMobile(isTouchDevice);
+        const isIpad = /iPad/i.test(navigator.userAgent);
+        setIsMobile(isTouchDevice || isIpad);
     }
     
     checkIsMobile();
