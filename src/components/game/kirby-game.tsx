@@ -162,15 +162,17 @@ export default function KirbyGame() {
   }, [level, loadLevel, levelComplete]);
 
   const gameLoop = useCallback(() => {
-    if (gameOver || !gameStarted || levelComplete) {
-      if (gameLoopRef.current) {
-        cancelAnimationFrame(gameLoopRef.current);
+    if (!gameStarted || gameOver) {
+        if (gameLoopRef.current) {
+          cancelAnimationFrame(gameLoopRef.current);
+        }
+        return;
       }
-      if (gameStarted && !gameOver) {
+  
+      if (levelComplete) {
         gameLoopRef.current = requestAnimationFrame(gameLoop);
+        return;
       }
-      return;
-    }
 
     setKirby(prevKirby => {
       let { x, y, vx, vy, onGround } = { ...prevKirby };
