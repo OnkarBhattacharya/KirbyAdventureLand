@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect, useRef, useCallback } from 'react';
 import {
   GRAVITY,
@@ -15,8 +14,6 @@ import {
   INVINCIBILITY_DURATION,
   TROPHY_SIZE,
 } from '@/lib/game-config';
-import KirbyCharacter from './kirby-character';
-import EnemyCharacter from './enemy-character';
 import Platform from './platform';
 import StarPowerup from './star-powerup';
 import { Button } from '@/components/ui/button';
@@ -26,33 +23,8 @@ import Trophy from './trophy';
 import Fireworks from './fireworks';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { ArrowLeft, ArrowRight, ArrowUp } from 'lucide-react';
-
-type GameObject = {
-  x: number;
-  y: number;
-};
-
-type KirbyState = GameObject & {
-  vx: number;
-  vy: number;
-  onGround: boolean;
-};
-
-type EnemyState = GameObject & {
-    id: number;
-    dir: number;
-    range: number;
-    initialX: number;
-    speed: number;
-};
-
-type StarState = GameObject & {
-    id: number;
-};
-
-type TrophyState = GameObject & {
-  id: number;
-};
+import { KirbyState, EnemyState, StarState, TrophyState } from './types';
+import { MemoizedKirby, MemoizedEnemy } from './memoized-characters';
 
 export default function KirbyGame() {
   const [level, setLevel] = useState(0);
@@ -358,12 +330,12 @@ export default function KirbyGame() {
         className="absolute top-0 left-0 w-full h-full"
         style={{ transform: `translateX(-${cameraX}px)` }}
       >
-        <KirbyCharacter position={kirby} isInvincible={isInvincible} character={selectedCharacter} />
+        <MemoizedKirby position={kirby} isInvincible={isInvincible} character={selectedCharacter} />
         {platforms.map((p, i) => (
           <Platform key={i} {...p} />
         ))}
         {enemies.map((e) => (
-          <EnemyCharacter key={e.id} position={e} />
+          <MemoizedEnemy key={e.id} position={e} />
         ))}
         {stars.map((s) => (
           <StarPowerup key={s.id} position={s} />
