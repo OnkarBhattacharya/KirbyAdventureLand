@@ -279,6 +279,7 @@ export default function KirbyGame() {
                       <button
                           key={char.name}
                           onClick={() => setSelectedCharacter(char.name)}
+                          aria-pressed={selectedCharacter === char.name}
                           className={cn(
                               "p-2 rounded-lg border-2 flex flex-col items-center gap-2 transition-all",
                               selectedCharacter === char.name ? 'border-accent bg-accent/20' : 'border-border hover:bg-muted'
@@ -347,6 +348,7 @@ export default function KirbyGame() {
           <div className="flex gap-2">
             <Button
               className="w-16 h-16 rounded-full bg-primary/50 text-white"
+              aria-label="Move left"
               onTouchStart={handleTouchStart('arrowleft')}
               onTouchEnd={handleTouchEnd('arrowleft')}
             >
@@ -354,6 +356,7 @@ export default function KirbyGame() {
             </Button>
             <Button
               className="w-16 h-16 rounded-full bg-primary/50 text-white"
+              aria-label="Move right"
               onTouchStart={handleTouchStart('arrowright')}
               onTouchEnd={handleTouchEnd('arrowright')}
             >
@@ -362,6 +365,7 @@ export default function KirbyGame() {
           </div>
           <Button
             className="w-20 h-20 rounded-full bg-accent/50 text-white"
+            aria-label="Jump"
             onTouchStart={handleTouchStart('arrowup')}
             onTouchEnd={handleTouchEnd('arrowup')}
           >

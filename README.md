@@ -5,13 +5,13 @@ This is a simple and fun 2D platformer game built with Next.js, React, and TypeS
 ## Features
 
 * **Classic Platformer Gameplay:** Run, jump, and stomp on enemies to progress through the levels.
-* **Lives System:** You start with 3 lives. If you fall or get hit by an enemy, you'll lose a life and restart the level.
-* **Pause Functionality:** Pause the game at any time by pressing the 'P' key.
-* **Coyote Time & Variable Jump Height:** Jump for a few frames after walking off a platform and perform short hops or high jumps.
-* **Multiple Levels:** The game features multiple levels with increasing difficulty.
-* **Power-ups:** Collect stars to become invincible for a short period of time.
-* **Character Selection:** Choose from a variety of different colored Kirbys to play as.
-* **Mobile Friendly:** The game is fully responsive and can be played on both desktop and mobile devices.
+* **Game Over & Restart:** Falling off the screen or touching an enemy ends the run; restart from level 1.
+* **Multiple Levels:** The game features 10 levels with increasing difficulty.
+* **Power-ups:** Collect stars to become invincible for a short period of time (5 seconds).
+* **Character Selection:** Choose from 15 differently colored Kirbys to play as.
+* **Mobile Friendly:** On-screen touch controls appear automatically on touch devices.
+
+> Roadmap (not yet implemented): pause key, multi-life system, coyote time / variable jump height.
 
 ## Getting Started
 
@@ -35,7 +35,7 @@ npm install
 npm run dev
 ```
 
-This will start the development server on `http://localhost:3000`. You can then open this URL in your browser to play the game.
+This will start the development server on `http://localhost:9002` (the port is set in `package.json`). You can then open this URL in your browser to play the game.
 
 ## Building for Production
 
@@ -45,7 +45,7 @@ To build the game for production, you can use the following command:
 npm run build
 ```
 
-This will create a production-ready build in the `.next` directory. You can then deploy this directory to any static hosting service.
+The project is configured for deployment on **Firebase App Hosting** (see `apphosting.yaml`).
 
 ## Architecture
 
@@ -62,7 +62,7 @@ The game is built using a component-based architecture with React and Next.js. H
     *   **`types.ts`**: This file contains all of the TypeScript type definitions for the game.
     *   **`memoized-characters.tsx`**: This file contains memoized versions of the character components to improve performance.
 *   **`src/lib/game-config.ts`**: This file contains all of the game configuration constants, such as gravity, jump force, and level data.
-*   **`src/hooks/use-mobile.ts`**: This is a custom hook that detects if the user is on a mobile device.
+* **`src/hooks/use-mobile.tsx`**: This is a custom hook that detects if the user is on a mobile device.
 
 ## Contributing
 
@@ -70,4 +70,4 @@ Contributions are welcome! If you have any ideas, suggestions, or bug reports, p
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
+No LICENSE file is currently included in this repository. All rights reserved by the author until a license is added.
